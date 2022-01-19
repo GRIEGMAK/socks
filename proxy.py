@@ -6,6 +6,8 @@ import os
 
 def main():
     username="userproxy"
+    port = int(input("Input port: "))
+    port = str(port)
     try:
         password_proxy =raw_input("type your password here: ")
     except:
@@ -21,7 +23,7 @@ def main():
     os.system("""
             echo '
             logoutput: syslog /var/log/danted.log
-            internal: eth0 port = 1080
+            internal: eth0 port = %s
             external: eth0
              
             socksmethod: username
@@ -39,13 +41,13 @@ def main():
                 log: error
                 method: username
             }' > /home/dante/danted.conf
-                """)
+                """ % port)
     os.system("useradd --shell /usr/sbin/nologin -m %s" % username)
     os.system('echo "%s:%s" | chpasswd' % (username,password_proxy))
     os.system("apt-get -y install ufw")
     os.system("ufw status")
     os.system("ufw allow ssh")
-    os.system("ufw allow proto tcp from any to any port 1080")
+    os.system("ufw allow proto tcp from any to any port %s" % port)
     os.system("ufw status numbered")
     os.system("echo 'y' | ufw enable")
     os.system("""
@@ -63,7 +65,7 @@ exit 0
     os.system("echo '________________________________'")
     os.system("echo ' '")
     os.system("echo \"YOUR IP ADDRESS: `hostname -I | awk '{print $1}'`\"")
-    os.system("echo 'PORT: 1080'")
+    os.system("echo 'PORT: %s'" % port)
     os.system("echo 'LOGIN: %s'" % username)
     os.system("echo 'PASSWORD: %s'" % password_proxy)
 
